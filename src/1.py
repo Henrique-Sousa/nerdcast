@@ -7,9 +7,6 @@ import time
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 import re
-from dataclasses import dataclass
-from typing import List, Optional
-from enum import Enum, auto
 from datetime import date
 
 HTTP_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
@@ -41,6 +38,7 @@ while True:
     time.sleep(1)
 
 podcast_cards = driver.find_elements_by_css_selector('#more-podcasts article.card-post.-rowdesktop')
+podcast_cards.reverse()
 for card in podcast_cards:
     url = card.find_element_by_css_selector('div.info h2 a').get_attribute('href')
     little_thumb_url = card.find_element_by_css_selector('a.image img').get_attribute('src')
