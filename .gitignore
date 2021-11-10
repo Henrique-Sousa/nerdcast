@@ -1,4 +1,5 @@
-*.swp
+*.sw?
 bin
 lib
 __pycache__
+env.py

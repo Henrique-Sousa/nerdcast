@@ -4,6 +4,8 @@ bs4==0.0.1
 pipdeptree==2.2.0
   - pip [required: >=6.0.0, installed: 20.1.1]
 pkg-resources==0.0.0
+psycopg==3.0.2
+  - backports.zoneinfo [required: Any, installed: 0.2.1]
 pyOpenSSL==21.0.0
   - cryptography [required: >=3.3, installed: 35.0.0]
     - cffi [required: >=1.12, installed: 1.15.0]
