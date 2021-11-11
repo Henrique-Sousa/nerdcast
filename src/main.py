@@ -26,9 +26,6 @@ ad_x_button.click()
 
 actions = ActionChains(driver)
 
-# pra selecionar a categoria manualmente (ex. pra teste)
-time.sleep(3)
-
 show_more_button = driver.find_element(by='id', value='show-more-podcasts')
 actions.move_to_element(show_more_button).perform()
 
@@ -39,7 +36,6 @@ while True:
     else:
         break
     time.sleep(1)
-
 
 connection = psycopg.connect(
         user=env.user,
@@ -58,9 +54,16 @@ for card in podcast_cards:
     date_str = mytime.split('•')[1].strip()
     title = card.find_element_by_css_selector('div.info h2 a').text.strip()
     podcast_and_number = card.find_element_by_css_selector('div.info > a').text.strip()
-    podcast_str = re.findall(r'^([^\d]+) (\d+)', podcast_and_number)[0][0].strip()
-    podcast = Podcast[podcast_str.replace('á', 'a').replace(' ', '_').upper()].value
-    number = int(re.findall(r'^([^\d]+) (\d+)', podcast_and_number)[0][1])
+    number_str = re.search(r'(\d+[A-Za-z]?)?$', podcast_and_number).group().strip()
+    podcast_str = podcast_and_number.rstrip(number_str).strip().replace('á', 'a').replace(' ', '_').upper()
+    if podcast_str in Podcast.__members__:
+        podcast = Podcast[podcast_str].value
+    else:
+        podcast = None
+    if number_str.isdigit():
+        number = int(number_str)
+    else:
+        number = None
 
     hours_match = re.match(r'\d{1,2} horas? ', length_str)
     if hours_match:
@@ -98,12 +101,7 @@ for card in podcast_cards:
             number, title, 
             length, date, 
             audio_url, content_text)
-        values (
-            %s, %s,
-            %s,
-            %s, %s,
-            %s, %s,
-            %s, %s) 
+        values ( %s, %s, %s, %s, %s, %s, %s, %s, %s) 
         on conflict do nothing """, (
         little_thumb_url, big_thumb_url, 
         podcast, 
